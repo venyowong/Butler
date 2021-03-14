@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Butler.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "-t asset --command Analyse --fundcode 001875 --cost 3.8312 --share 4646.04 --outputformat description"
+    }
+  }
+}
