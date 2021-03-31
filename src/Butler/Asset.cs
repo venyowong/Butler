@@ -1,4 +1,5 @@
 ﻿using Butler.Daos;
+using Butler.Entities;
 using Butler.Models;
 using Butler.Services;
 using Serilog;
@@ -132,14 +133,25 @@ namespace Butler
                 });
             }
 
+            var cost = funds.Sum(x => x.Share * x.AvgCost);
+            AssetDao.UpsertAssetSnapshot(new AssetSnapshot
+            {
+                Date = DateTime.Now.Date,
+                TotalAsset = total,
+                TotalCost = cost,
+                BondAsset = bond,
+                CashAsset = cash,
+                StockAsset = stock
+            });
             return new AssetAnalysisModel
             {
                 TotalAsset = total,
-                TotalCost = funds.Sum(x => x.Share * x.AvgCost),
+                TotalCost = cost,
                 BondAsset = bond,
                 CashAsset = cash,
                 StockAsset = stock,
-                Funds = funds.OrderByDescending(x => x.PositionProfitRate).ToList()
+                Funds = funds.OrderByDescending(x => x.PositionProfitRate).ToList(),
+                LastSnapshot = AssetDao.GetAssetSnapshot(DateTime.Now.Date.AddDays(-1))
             };
         }
 

@@ -4,6 +4,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Butler.Daos
@@ -17,6 +18,7 @@ namespace Butler.Daos
             DbHelper.EnsureDbFolderExists();
             _db = new SQLiteConnection("dbs/asset.db", false);
             _db.CreateTable<FundPosition>();
+            _db.CreateTable<AssetSnapshot>();
         }
 
         public static int AddFundPosition(FundPosition fundPosition) => _db.Insert(fundPosition);
@@ -30,5 +32,24 @@ namespace Butler.Daos
         public static int Clear() => _db.DeleteAll<FundPosition>();
 
         public static int DeleteFundPosition(string fundCode) => _db.Execute($"DELETE FROM FundPosition WHERE FundCode='{fundCode}'");
+
+        public static AssetSnapshot GetAssetSnapshot(DateTime date) => _db.Query<AssetSnapshot>($"SELECT * FROM AssetSnapshot WHERE Date='{DbHelper.FormatDateTime(date)}'")?.FirstOrDefault();
+
+        public static bool UpsertAssetSnapshot(AssetSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                return false;
+            }
+
+            if (GetAssetSnapshot(snapshot.Date) == null)
+            {
+                return _db.Insert(snapshot) > 0;
+            }
+            else
+            {
+                return _db.Update(snapshot) > 0;
+            }
+        }
     }
 }

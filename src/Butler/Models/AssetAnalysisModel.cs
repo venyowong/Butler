@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Butler.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,53 +14,60 @@ namespace Butler.Models
 
         public decimal TotalProfit
         {
-            get => this.TotalAsset - this.TotalCost;
+            get => TotalAsset - TotalCost;
         }
 
         public decimal TotalProfitRate
         {
-            get => this.TotalProfit / this.TotalCost;
+            get => TotalProfit / TotalCost;
         }
 
         public decimal StockAsset { get; set; }
 
         public decimal StockRatio
         {
-            get => this.StockAsset / this.TotalAsset;
+            get => StockAsset / TotalAsset;
         }
 
         public decimal BondAsset { get; set; }
 
         public decimal BondRatio
         {
-            get => this.BondAsset / this.TotalAsset;
+            get => BondAsset / TotalAsset;
         }
 
         public decimal CashAsset { get; set; }
 
         public decimal CashRatio
         {
-            get => this.CashAsset / this.TotalAsset;
+            get => CashAsset / TotalAsset;
         }
 
         public List<FundAnalysisModel> Funds { get; set; }
 
+        public AssetSnapshot LastSnapshot { get; set; }
+
         public string GetDescription()
         {
-            if (this.TotalAsset <= 0)
+            if (TotalAsset <= 0)
             {
                 return "账户未持有资产";
             }
 
-            var description = $@"账户投入成本为 {this.TotalCost.ToString("F2")} 元，目前盈利 {this.TotalProfit.ToString("F2")}元，实现 {this.TotalProfitRate.ToString("P")} 收益率，总资产为 {this.TotalAsset.ToString("F2")}元，其中
-股票资产有 {this.StockAsset.ToString("F2")}元，占 {this.StockRatio.ToString("P")}
-债券资产有 {this.BondAsset.ToString("F2")}元，占 {this.BondRatio.ToString("P")}
-现金资产有 {this.CashAsset.ToString("F2")}元，占 {this.CashRatio.ToString("P")}";
-            if (this.Funds?.Any() ?? false)
+            var description = $"账户投入成本为 {TotalCost.ToString("F2")} 元";
+            if (LastSnapshot?.TotalCost <= TotalCost)
             {
-                var first = this.Funds.First();
+                description += $"\n昨日收益：{TotalProfit - (LastSnapshot.TotalAsset - LastSnapshot.TotalCost)}";
+            }
+            description += '\n' + $@"目前盈利 {TotalProfit.ToString("F2")}元，实现 {TotalProfitRate.ToString("P")} 收益率，总资产为 {TotalAsset.ToString("F2")}元，其中
+股票资产有 {StockAsset.ToString("F2")}元，占 {StockRatio.ToString("P")}
+债券资产有 {BondAsset.ToString("F2")}元，占 {BondRatio.ToString("P")}
+现金资产有 {CashAsset.ToString("F2")}元，占 {CashRatio.ToString("P")}";
+            if (Funds?.Any() ?? false)
+            {
+                var first = Funds.First();
                 description += $"\n目前持仓中最赚钱的基金是 {first.FundName}，收益率达到 {first.PositionProfitRate.ToString("P")}，基金收益明细如下：";
-                this.Funds.ForEach(x =>
+                Funds.ForEach(x =>
                 {
                     description += $"\n\n{x.GetDescription()}";
                 });

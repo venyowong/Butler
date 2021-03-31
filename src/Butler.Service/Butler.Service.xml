@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Butler.Service</name>
+    </assembly>
+    <members>
+        <member name="P:Butler.Service.MailConfig.SmtpServer">
+            <summary>
+            邮箱服务器
+            </summary>
+        </member>
+        <member name="P:Butler.Service.MailConfig.Account">
+            <summary>
+            邮箱账户
+            </summary>
+        </member>
+        <member name="P:Butler.Service.MailConfig.Password">
+            <summary>
+            邮箱密码
+            </summary>
+        </member>
+        <member name="P:Butler.Service.MailConfig.From">
+            <summary>
+            发送邮箱
+            </summary>
+        </member>
+        <member name="P:Butler.Service.MailConfig.To">
+            <summary>
+            接收邮箱
+            </summary>
+        </member>
+        <member name="M:Butler.Service.Extensions.ServiceCollectionExtension.AddTransientBothTypes``2(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            为父类型和子类型同时添加服务实例
+            <para>避免通过父类注入的时候，无法通过子类类型查找子类对象，反之亦然</para>
+            <para>可以避免通过父类注入时，通过 GetServices 获取所有对象再查找子类时导致的内存浪费</para>
+            </summary>
+            <typeparam name="TService"></typeparam>
+            <typeparam name="TImplementation"></typeparam>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Butler.Service.Quartz.IScheduledJob.GetJobDetail">
+            <summary>
+            必须调用 JobBuilder.StoreDurably
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Butler.Service.Quartz.IScheduledJob.GetTriggers">
+            <summary>
+            不同的触发规则需要返回不同的 Trigger
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
