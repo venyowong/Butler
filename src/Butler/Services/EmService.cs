@@ -274,14 +274,27 @@ namespace Butler.Services
                         {
                             StockCode = columns[1].InnerText,
                             StockName = columns[2].InnerText,
-                            ReportDate = date
+                            ReportDate = date,
+                            FundCode = fundCode
                         };
-                        decimal.TryParse(columns[4].InnerText.Replace("%", ""), out decimal ratio);
-                        decimal.TryParse(columns[5].InnerText.Replace(",", ""), out decimal share);
-                        decimal.TryParse(columns[6].InnerText.Replace(",", ""), out decimal marketValue);
-                        position.Ratio = ratio / 100m;
-                        position.Share = share * 10000;
-                        position.MarketValue = marketValue * 10000;
+                        if (columns.Count == 9)
+                        {
+                            decimal.TryParse(columns[6].InnerText.Replace("%", ""), out decimal ratio);
+                            decimal.TryParse(columns[7].InnerText.Replace(",", ""), out decimal share);
+                            decimal.TryParse(columns[8].InnerText.Replace(",", ""), out decimal marketValue);
+                            position.Ratio = ratio / 100m;
+                            position.Share = share * 10000;
+                            position.MarketValue = marketValue * 10000;
+                        }
+                        else
+                        {
+                            decimal.TryParse(columns[4].InnerText.Replace("%", ""), out decimal ratio);
+                            decimal.TryParse(columns[5].InnerText.Replace(",", ""), out decimal share);
+                            decimal.TryParse(columns[6].InnerText.Replace(",", ""), out decimal marketValue);
+                            position.Ratio = ratio / 100m;
+                            position.Share = share * 10000;
+                            position.MarketValue = marketValue * 10000;
+                        }
                         return position;
                     })
                     .Where(x => x != null)
